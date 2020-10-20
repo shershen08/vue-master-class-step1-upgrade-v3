@@ -1,10 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import sourceData from '@/data'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     ...sourceData,
     authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
@@ -35,21 +32,21 @@ export default new Vuex.Store({
 
   mutations: {
     setPost (state, {post, postId}) {
-      Vue.set(state.posts, postId, post)
+      state.posts[postId] = post
     },
 
     setUser (state, {user, userId}) {
-      Vue.set(state.users, userId, user)
+      state.users[userId] = user
     },
 
     appendPostToThread (state, {postId, threadId}) {
       const thread = state.threads[threadId]
-      Vue.set(thread.posts, postId, postId)
+      thread.posts[postId] = postId
     },
 
     appendPostToUser (state, {postId, userId}) {
       const user = state.users[userId]
-      Vue.set(user.posts, postId, postId)
+      user.posts[postId] = postId
     }
   }
 })
