@@ -22,7 +22,6 @@ export default createStore({
 
       commit('setPost', {post, postId})
       commit('appendPostToThread', {threadId: post.threadId, postId})
-      commit('appendPostToUser', {userId: post.userId, postId})
     },
 
     updateUser ({commit}, user) {
@@ -42,11 +41,6 @@ export default createStore({
     appendPostToThread (state, {postId, threadId}) {
       const thread = state.threads[threadId]
       thread.posts[postId] = postId
-    },
-
-    appendPostToUser (state, {postId, userId}) {
-      const user = state.users[userId]
-      user.posts[postId] = postId
     }
   }
 })
