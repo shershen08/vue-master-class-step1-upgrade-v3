@@ -16,7 +16,7 @@ export default createStore({
   actions: {
     createPost ({commit, state}, post) {
       const postId = 'greatPost' + Math.random()
-      post['-key'] = postId
+      post['key'] = postId
       post.userId = state.authId
       post.publishedAt = Math.floor(Date.now() / 1000)
 
@@ -26,7 +26,7 @@ export default createStore({
     },
 
     updateUser ({commit}, user) {
-      commit('setUser', {userId: user['-key'], user})
+      commit('setUser', {userId: user['key'], user})
     }
   },
 

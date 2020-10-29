@@ -4,7 +4,7 @@
     <ThreadListItem
       v-for="thread in threads"
       :thread="thread"
-      :key="thread['-key']"
+      :key="thread['key']"
     />
   </div>
 </template>

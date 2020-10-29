@@ -2,7 +2,8 @@
   <CategoryListItem
     v-for="category in categories"
     :category="category"
-    :key="category['-key']"
+    :key="category['key']"
+
   />
 </template>
 

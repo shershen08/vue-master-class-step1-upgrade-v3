@@ -3,7 +3,7 @@
     <PostListItem
       v-for="post in posts"
       :post="post"
-      :key="post['-key']"
+      :key="post['key']"
     />
   </div>
 </template>
