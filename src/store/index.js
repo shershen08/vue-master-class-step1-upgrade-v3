@@ -10,6 +10,11 @@ export default createStore({
   getters: {
     authUser (state) {
       return state.users[state.authId]
+    },
+    userPosts: (state) => (userId) => {
+      const nonReactive = JSON.parse(JSON.stringify(state.posts))
+      console.log(nonReactive)
+      return nonReactive.filter(p => p.userId === userId)
     }
   },
 
