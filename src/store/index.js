@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import sourceData from '@/data'
 
-export default createStore({
+const store = createStore({
   state: {
     ...sourceData,
     authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
@@ -9,13 +9,12 @@ export default createStore({
 
   getters: {
     authUser (state) {
-      return state.users[state.authId]
+      return state.users.find(u => u.key === state.authId)
     },
-    userPosts: (state) => (userId) => {
-      const nonReactive = JSON.parse(JSON.stringify(state.posts))
-      console.log(nonReactive)
-      return nonReactive.filter(p => p.userId === userId)
-    }
+    userPosts: (state) => {
+      return state.posts.filter(p => p.userId === state.authId)
+    },
+    posts: (state) => state.posts
   },
 
   actions: {
@@ -36,16 +35,19 @@ export default createStore({
 
   mutations: {
     setPost (state, {post, postId}) {
-      state.posts[postId] = post
+      state.posts.push(post)
     },
 
     setUser (state, {user, userId}) {
-      state.users[userId] = user
+      const userIndex = state.users.findIndex(user => user.key === userId)
+      state.users.splice(userIndex, 1, user)
     },
 
     appendPostToThread (state, {postId, threadId}) {
-      const thread = state.threads[threadId]
-      thread.posts[postId] = postId
+      const threadIndex = state.threads.findIndex(thread => thread.key === threadId)
+      state.threads[threadIndex].posts[postId] = postId
     }
   }
 })
+
+export default store

@@ -9,7 +9,7 @@
     <UserProfileCardEditor
       v-else
       :user="user"
-      :userPostsCount="userPostsCount"
+      :userPostsCount="userPosts.length"
       :userThreadsCount="userThreadsCount"
     />
 
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-
     import PostList from '@/components/PostList'
     import UserProfileCard from '@/components/UserProfileCard'
     import UserProfileCardEditor from '@/components/UserProfileCardEditor'
@@ -58,25 +57,7 @@
 
         userThreadsCount () {
           return countObjectProperties(this.user.threads)
-        },
-
-        // userPosts () {
-        //   // console.log(this.user)
-        //   // return this.userPostsGetter(this.user.userId)
-
-        // },
-        // userPostsCount () {
-        //   return this.userPosts.length
-        // }
-
-        // userPosts () {
-        //   if (this.user.posts) {
-        //     return Object.values(this.$store.state.posts)
-        //                                       // TODO: key of the user
-        //       .filter(post => post.userId === this.user['key'])
-        //   }
-        //   return []
-        // }
+        }
       }
     }
 </script>
