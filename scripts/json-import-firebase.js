@@ -10,13 +10,12 @@ firebase.initializeApp(config);
 var db = firebase.firestore();
 
 // categories
-Object.keys(data.categories).forEach(function(key) {
-    const obj = data.categories[key]
+data.categories.forEach(function(category) {
     db.collection("categories").add({
-        slug: obj.slug,
-        name: obj.name,
-        key: obj.key,
-        forums: Object.keys(obj.forums)
+        slug: category.slug,
+        name: category.name,
+        key: category.key,
+        forums: Object.keys(category.forums)
     }).then(function(docRef) {
         console.log("Category written with ID: ", docRef.id);
     })
@@ -26,9 +25,8 @@ Object.keys(data.categories).forEach(function(key) {
 });
 
 // users
-Object.keys(data.users).forEach(function(key) {
-    const obj = data.users[key]
-    db.collection("users").add(obj).then(function(docRef) {
+data.users.forEach(function(user) {
+    db.collection("users").add(user).then(function(docRef) {
         console.log("user written with ID: ", docRef.id);
     })
     .catch(function(error) {
@@ -45,8 +43,7 @@ db.collection("stats").add(data.stats).then(function(docRef) {
 });
 
 //threads
-Object.keys(data.threads).forEach(function(key) {
-    const obj = data.threads[key]
+data.threads.forEach(function(obj) {
     db.collection("threads").add({
         publishedAt: obj.publishedAt,
         slug: obj.slug,
@@ -68,9 +65,7 @@ Object.keys(data.threads).forEach(function(key) {
 });
 
 //forums
-Object.keys(data.forums).forEach(function(key) {
-    const obj = data.forums[key]
-    console.log(obj)
+data.forums.forEach(function(obj) {
     db.collection("forums").add({
         categoryId :obj.categoryId ? obj.categoryId : '',
         description :obj.description,
@@ -89,8 +84,7 @@ Object.keys(data.forums).forEach(function(key) {
 });
 
 //posts
-Object.keys(data.posts).forEach(function(key) {
-    const obj = data.posts[key]
+data.posts.forEach(function(obj) {
     db.collection("posts").add({
         editedAt: obj.edited ? obj.edited.at : '',
         editedByUser: obj.edited ? obj.edited.by : '',
