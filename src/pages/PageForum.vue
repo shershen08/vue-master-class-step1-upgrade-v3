@@ -33,11 +33,11 @@
 
       computed: {
         forum () {
-          return this.$store.state.forums[this.id]
+          return this.$store.state.forums.find(f => f.key ===this.id)
         },
 
         threads () {
-          return Object.values(this.$store.state.threads)
+          return this.$store.state.threads
             .filter(thread => thread.forumId === this.id)
         }
       }

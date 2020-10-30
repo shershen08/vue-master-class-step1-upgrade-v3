@@ -1,10 +1,9 @@
 <template>
   <div class="flex-grid">
-    {{userPosts}}
     <UserProfileCard
       v-if="!edit"
       :user="user"
-      :userPostsCount="userPostsCount.length"
+      :userPostsCount="userPosts.length"
       :userThreadsCount="userThreadsCount"
     />
     <UserProfileCardEditor
@@ -30,6 +29,7 @@
 </template>
 
 <script>
+
     import PostList from '@/components/PostList'
     import UserProfileCard from '@/components/UserProfileCard'
     import UserProfileCardEditor from '@/components/UserProfileCardEditor'
@@ -53,20 +53,21 @@
       computed: {
         ...mapGetters({
           user: 'authUser',
-          userPostsGetter: 'userPosts'
+          userPosts: 'userPosts'
         }),
 
         userThreadsCount () {
           return countObjectProperties(this.user.threads)
         },
 
-        userPosts () {
-          console.log(this.user)
-          return this.userPostsGetter(this.user.userId)
-        },
-        userPostsCount () {
-          return this.userPosts.length
-        }
+        // userPosts () {
+        //   // console.log(this.user)
+        //   // return this.userPostsGetter(this.user.userId)
+
+        // },
+        // userPostsCount () {
+        //   return this.userPosts.length
+        // }
 
         // userPosts () {
         //   if (this.user.posts) {
