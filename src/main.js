@@ -6,6 +6,17 @@ import router from './router'
 import store from '@/store'
 import AppDate from '@/components/AppDate'
 
+import connectionData from './firebase-connection'
+
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+
+firebase.initializeApp(connectionData)
+
+export const db = firebase.firestore()
+export const auth = firebase.auth()
+
 const app = createApp(App)
   .use(store)
   .use(router)
@@ -13,3 +24,4 @@ const app = createApp(App)
 app.component('AppDate', AppDate)
 
 app.mount('#app')
+
