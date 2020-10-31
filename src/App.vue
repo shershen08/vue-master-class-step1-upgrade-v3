@@ -21,17 +21,15 @@
       }
     },
     mounted() {
-     // this.$nextTick(() => {
-      //   auth.onAuthStateChanged((usr) => {
-      // if (usr) {
-      const collections = ['Threads', 'Users', 'Categories', 'Posts', 'Forums'];
-        for (const collection of collections) {
-          this.$store.dispatch(`bind${collection}`);
-          console.log(collection)
-        }
-      // }
-      //   })
-       // })
+      auth.onAuthStateChanged((usr) => {
+        //if (usr) {
+          const collections = ['Threads', 'Users', 'Categories', 'Posts', 'Forums'];
+          for (const collection of collections) {
+            this.$store.dispatch(`bind${collection}`);
+          }
+          this.$store.dispatch('setAuthUser')
+        //}
+      })
     }
   }
 </script>

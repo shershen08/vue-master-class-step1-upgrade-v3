@@ -7,6 +7,7 @@
 
 <script>
 import CategoryList from '@/components/CategoryList'
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
@@ -14,9 +15,9 @@ export default {
   },
 
   computed: {
-    categories () {
-      return this.$store.state.categories
-    }
+    ...mapGetters([
+      'categories'
+    ])
   }
 }
 </script>

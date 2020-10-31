@@ -1,8 +1,10 @@
 import { createStore } from 'vuex'
 import sourceData from '@/data'
 
-import { firestoreAction, vuexfireMutations } from 'vuexfire';
+import { firestoreAction, vuexfireMutations, firestoreOptions } from 'vuexfire';
 import { db } from '@/main';
+
+firestoreOptions.wait = true
 
 const store = createStore({
   state: {
@@ -12,16 +14,13 @@ const store = createStore({
     forums: [],
     categories: [],
     threads: [],
-    authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
+    activeUser: {},
+    authId: 'bTqsiklblWGtnqDpumcO' // from key in Fb store
   },
 
   getters: {
-    authUser (state) {
-      return state.users.find(u => u.key === state.authId) || {}
-    },
-    userPosts: (state) => {
-      return state.posts.filter(p => p.userId === state.authId)
-    },
+    userPosts: (state) => state.posts.filter(p => p.userId === state.activeUser.key),
+    authUser: (state) => state.activeUser,
     posts: (state) => state.posts,
     users: (state) => state.users,
     forums: (state) => state.forums,
@@ -47,23 +46,47 @@ const store = createStore({
     bindPosts: firestoreAction((context) => context.bindFirestoreRef('posts', db.collection('posts'))),
     bindForums: firestoreAction((context) => context.bindFirestoreRef('forums', db.collection('forums'))),
     bindCategories: firestoreAction((context) => context.bindFirestoreRef('categories', db.collection('categories'))),
-    bindThreads: firestoreAction((context) => context.bindFirestoreRef('threads', db.collection('threads')))
+    bindThreads: firestoreAction((context) => context.bindFirestoreRef('threads', db.collection('threads'))),
+
+    setAuthUser({commit, state}){
+      db.collection('users').doc(state.authId).get().then(snapshot => {
+        const user = snapshot.data()
+        commit('setActiveUser', {
+          user,
+        })
+      })
+    }
   },
 
   mutations: {
     ...vuexfireMutations,
+
     setPost (state, {post, postId}) {
-      state.posts.push(post)
+      db.collection('posts').add(post)
+    },
+
+    setActiveUser (state, {user}){
+      state.activeUser = user
     },
 
     setUser (state, {user, userId}) {
-      const userIndex = state.users.findIndex(user => user.key === userId)
-      state.users.splice(userIndex, 1, user)
+      state.activeUser = user
+      db.collection('users').doc(state.authId).update(user)
     },
 
     appendPostToThread (state, {postId, threadId}) {
-      const threadIndex = state.threads.findIndex(thread => thread.key === threadId)
-      state.threads[threadIndex].posts[postId] = postId
+
+      const newThread = {
+        ...state.threads.find(thread => thread.key === threadId)
+      }
+      newThread.posts[postId] = postId
+
+      db.collection('threads')
+        .doc(threadId)
+        .set(newThread)
+        .then(() => {
+          // newThread updated
+        })
     }
   }
 })
