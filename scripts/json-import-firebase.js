@@ -4,6 +4,12 @@ require("firebase/firestore");
 const data = require('../src/data.json');
 const config = require('./app.config.json');
 
+if(!config.apiKey || !config.authDomain) {
+    console.log('No config data provided')
+    process.exit(1)
+}
+
+
 // Initialize Cloud Firestore through Firebase
 firebase.initializeApp(config);
   
