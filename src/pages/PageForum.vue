@@ -33,7 +33,7 @@
 
       computed: {
         forum () {
-          return this.$store.state.forums.find(f => f.key === this.id)
+          return this.$store.state.forums.find(f => f.id === this.id)
         },
 
         threads () {

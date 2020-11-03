@@ -2,7 +2,7 @@
   <div class="thread">
     <div>
       <p>
-        <router-link :to="{name: 'ThreadShow', params: {id: thread['key']}}">
+        <router-link :to="{name: 'ThreadShow', params: {id: thread.id}}">
           {{thread.title}}
         </router-link>
       </p>
@@ -44,7 +44,7 @@
         return countObjectProperties(this.thread.posts) - 1
       },
       user () {
-        return this.$store.state.users.find(u => u.key === this.thread.userId)
+        return this.$store.state.users.find(u => u.id === this.thread.userId)
       }
     }
   }

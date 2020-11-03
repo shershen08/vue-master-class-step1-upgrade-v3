@@ -31,13 +31,13 @@
 
     computed: {
       thread () {
-        return this.$store.state.threads.find(t => t.key === this.id)
+        return this.$store.state.threads.find(t => t.id === this.id)
       },
 
       posts () {
         const postIds = Object.values(this.thread.posts)
         return this.$store.state.posts
-          .filter(post => postIds.includes(post['key']))
+          .filter(post => postIds.includes(post.id))
       }
     }
   }

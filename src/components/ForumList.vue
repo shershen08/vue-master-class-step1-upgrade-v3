@@ -2,7 +2,7 @@
   <ForumListItem
     v-for="forum in forums"
     :forum="forum"
-    :key="forum['key']"
+    :key="forum.id"
   />
 </template>
 
