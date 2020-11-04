@@ -1,9 +1,9 @@
 
 // mock for testing
-// const firebase = require('./fb-mock.js')
+const firebase = require('./fb-mock.js')
 
-const firebase = require("firebase");
-require("firebase/firestore");
+// const firebase = require("firebase");
+// require("firebase/firestore");
 
 const data = require('../src/data.json');
 const importData = {
@@ -29,7 +29,15 @@ const importUsers = () => {
 
     data.users.forEach(function(user) {
         const p = new Promise((resolve, reject) => {
-            db.collection("users").add(user).then(function(docRef) {
+            db.collection("users").add({
+                avatar: user.avatar,
+                email: user.email,
+                lastVisitAt: user.lastVisitAt,
+                name: user.name,
+                registeredAt: user.registeredAt,
+                username: user.username,
+                usernameLower: user.usernameLower,
+            }).then(function(docRef) {
                 console.log("user written with ID: ", docRef.id);
                 resolve({
                     [user.id]: docRef.id
@@ -45,7 +53,7 @@ const importUsers = () => {
     return Promise.all(importUsersCalls)
 }
 
-const importPosts = (usersMap) => {
+const importPosts = (replaceMapItems) => {
     const importPostsCalls = []
     console.log('importPosts')
 
@@ -53,12 +61,15 @@ const importPosts = (usersMap) => {
         const p = new Promise((resolve, reject) => {
             db.collection("posts").add({
                 editedAt: post.edited ? post.edited.at : '',
-                editedByUser: post.edited ? post.edited.by : '',
-                moderated: post.edited ? post.edited.moderated : '',
+                editedByUser: (post.edited && post.edited.by) ? replaceMapItems[post.edited.by] : '',
+                moderated: (post.edited && post.edited.moderated) ? post.edited.moderated : '',
                 publishedAt :post.publishedAt,
                 text :post.text ? post.text : '',
-                threadId :post.threadId,
-                userId : usersMap[post.userId] || '42',
+                // TODO
+                // this replacement one fails bc we didn't import threads yet !
+               // threadId : post.threadId ? replaceMapItems[post.threadId] : '',
+                threadId : post.threadId,
+                userId : replaceMapItems[post.userId] || '42',
             }).then(function(docRef) {
                 console.log("post written with ID: ", docRef.id);
                 resolve({
@@ -75,7 +86,6 @@ const importPosts = (usersMap) => {
     return Promise.all(importPostsCalls)
 }
 
-
 //stats
 // db.collection("stats").add(data.stats).then(function(docRef) {
 //     console.log("Forum stats written with ID: ", docRef.id);
@@ -89,6 +99,7 @@ const importThreads = (replaceMapItems) => {
     console.log('importThreads')
 
     data.threads.forEach(function(obj) {
+        // console.log(obj.lastPostId, replaceMapItems[obj.lastPostId])
         const p = new Promise((resolve, reject) => {
             db.collection("threads").add({
                 publishedAt: obj.publishedAt,
@@ -96,9 +107,12 @@ const importThreads = (replaceMapItems) => {
                 title: obj.title,
                 userId: replaceMapItems[obj.userId],
                 firstPostId: obj.firstPostId,
+                // TODO
+                // this replacement one fails bc we didn't import forums yet !
+                // forumId: obj.forumId ? replaceMapItems[obj.forumId] : '',
                 forumId: obj.forumId,
                 lastPostAt: obj.lastPostAt,
-                lastPostId: obj.lastPostId,
+                lastPostId: obj.lastPostId ? replaceMapItems[obj.lastPostId] : '',
                 contributors: obj.contributors ? Object.keys(obj.contributors).map(userId => replaceMapItems[userId]) : [],
                 posts: obj.posts ? Object.keys(obj.posts).map(postId => replaceMapItems[postId]) : []
             }).then(function(docRef) {
@@ -124,9 +138,11 @@ const importForums = (replaceMapItems) => {
     data.forums.forEach(function(obj) {
         const p = new Promise((resolve, reject) => {
             db.collection("forums").add({
+                // TODO
+                //categoryId :obj.categoryId ? replaceMapItems[obj.categoryId] : '',
                 categoryId :obj.categoryId ? obj.categoryId : '',
                 description :obj.description,
-                lastPostId :obj.lastPostId ? obj.lastPostId : '',
+                lastPostId :obj.lastPostId ? replaceMapItems[obj.lastPostId] : '',
                 name :obj.name,
                 slug :obj.slug,
                 threads: obj.threads ? Object.keys(obj.threads).map(threadId => replaceMapItems[threadId]) : [],
@@ -171,12 +187,30 @@ const importCategories = (replaceMapItems) => {
     return Promise.all(importCategoriesCalls)
 }
 
+const updateRetrospectivelyForums = () => {
+    return new Promise((r) => {
+        r()
+    })
+}
+
+const updateRetrospectivelyThreads = () => {
+    return new Promise((r) => {
+        r()
+    })
+}
+
+const updateRetrospectivelyPosts = () => {
+    return new Promise((r) => {
+        r()
+    })
+}
+
 
 importUsers().then(usersMap => {
     replaceMap = {
         ...reduceArrayToObject(usersMap)
     }
-    return importPosts(usersMap)
+    return importPosts(replaceMap)
 }).then(postsMap => {
     replaceMap = {
         ...reduceArrayToObject(postsMap),
@@ -189,13 +223,21 @@ importUsers().then(usersMap => {
         ...replaceMap
     }
     return importForums(replaceMap) 
-}).then(postsMap => {
+}).then(forumsMap => {
     replaceMap = {
-        ...reduceArrayToObject(postsMap),
+        ...reduceArrayToObject(forumsMap),
         ...replaceMap
     }
     return importCategories(replaceMap)
 }).then(result => {
-    console.log('Import success')
-    process.exit(0)
+    console.log('Initial import success, updating related IDs')
+
+    updateRetrospectivelyForums().then(() => {
+        return updateRetrospectivelyThreads()
+    }).then(() => {
+        return updateRetrospectivelyPosts()
+    }).then(result => {
+        console.log('All ids now in sync')
+        process.exit(0)
+    });
 })

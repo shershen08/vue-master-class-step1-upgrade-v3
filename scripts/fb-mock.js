@@ -6,6 +6,11 @@ const mockdb = {
         return {
             add: function(dataToAdd){
                 // console.log(`LOG: adding ${colName} item ${JSON.stringify(dataToAdd)}`)
+                Object.keys(dataToAdd).forEach(key => {
+                    if(typeof dataToAdd[key] == "undefined") {
+                        throw new Error(`${key} value is undefined`)
+                    }
+                })
                 return new Promise((resolve) => {
                     resolve({
                         id: getRandom()
