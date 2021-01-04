@@ -5,7 +5,7 @@ const firebase = require('./fb-mock.js')
 // const firebase = require("firebase");
 // require("firebase/firestore");
 
-const data = require('../src/data.json');
+const data = require('../src/data-2.json');
 const importData = {
     ...data
 }
@@ -106,15 +106,17 @@ const importThreads = (replaceMapItems) => {
                 slug: obj.slug,
                 title: obj.title,
                 userId: replaceMapItems[obj.userId],
-                firstPostId: obj.firstPostId,
+                firstPostId: obj.firstPostId ? replaceMapItems[obj.firstPostId]: '',
+               
                 // TODO
                 // this replacement one fails bc we didn't import forums yet !
                 // forumId: obj.forumId ? replaceMapItems[obj.forumId] : '',
                 forumId: obj.forumId,
                 lastPostAt: obj.lastPostAt,
                 lastPostId: obj.lastPostId ? replaceMapItems[obj.lastPostId] : '',
-                contributors: obj.contributors ? Object.keys(obj.contributors).map(userId => replaceMapItems[userId]) : [],
-                posts: obj.posts ? Object.keys(obj.posts).map(postId => replaceMapItems[postId]) : []
+                contributors: obj.contributors ? obj.contributors.map(userId => replaceMapItems[userId]) : [],
+
+                posts: obj.posts ? obj.posts.map(postId => replaceMapItems[postId]) : []
             }).then(function(docRef) {
                 console.log("threads written with ID: ", docRef.id);
                 resolve({
@@ -145,7 +147,7 @@ const importForums = (replaceMapItems) => {
                 lastPostId :obj.lastPostId ? replaceMapItems[obj.lastPostId] : '',
                 name :obj.name,
                 slug :obj.slug,
-                threads: obj.threads ? Object.keys(obj.threads).map(threadId => replaceMapItems[threadId]) : [],
+                threads: obj.threads ? obj.threads.map(threadId => replaceMapItems[threadId]) : [],
             }).then(function(docRef) {
                 console.log("forum written with ID: ", docRef.id);
                 resolve({
@@ -170,7 +172,7 @@ const importCategories = (replaceMapItems) => {
             db.collection("categories").add({
                 slug: category.slug,
                 name: category.name,
-                forums: category.forums ? Object.keys(category.forums).map(threadId => replaceMapItems[threadId]) : [],
+                forums: category.forums ? category.forums.map(threadId => replaceMapItems[threadId]) : [],
             }).then(function(docRef) {
                 console.log("Category written with ID: ", docRef.id);
                 resolve({
