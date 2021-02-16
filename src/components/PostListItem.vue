@@ -35,7 +35,7 @@
 
       computed: {
         user () {
-          return this.$store.state.users[this.post.userId]
+          return this.$store.state.users.find(u => u.key === this.post.userId)
         },
 
         userPostsCount () {

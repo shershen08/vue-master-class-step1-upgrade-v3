@@ -1,14 +1,12 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '@/pages/PageHome'
 import ThreadShow from '@/pages/PageThreadShow'
 import Category from '@/pages/PageCategory'
 import Forum from '@/pages/PageForum'
 import Profile from '@/pages/PageProfile'
 import NotFound from '@/pages/PageNotFound'
-Vue.use(Router)
 
-export default new Router({
+export default createRouter({
   routes: [
     {
       path: '/',
@@ -46,10 +44,10 @@ export default new Router({
       props: {edit: true}
     },
     {
-      path: '*',
+      path: '/:catchAll(.*)',
       name: 'NotFound',
       component: NotFound
     }
   ],
-  mode: 'history'
+  history: createWebHashHistory()
 })

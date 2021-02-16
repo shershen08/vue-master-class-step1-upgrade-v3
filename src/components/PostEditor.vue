@@ -30,6 +30,8 @@
         }
       },
 
+      emits: ['save'],
+
       methods: {
         save () {
           const post = {

@@ -1,9 +1,12 @@
 <template>
-  <span :title="timestamp | humanFriendlyDate">{{timestamp | diffForHumans}}</span>
+  <span :title="humanFriendlyDate">{{diffForHumans}}</span>
 </template>
 
 <script>
-    import moment from 'moment'
+    import dayjs from 'dayjs'
+    import relativeTime from 'dayjs/plugin/relativeTime'
+    dayjs.extend(relativeTime)
+
     export default {
       props: {
         timestamp: {
@@ -12,13 +15,13 @@
         }
       },
 
-      filters: {
-        humanFriendlyDate (date) {
-          return moment.unix(date).format('MMMM Do YYYY, h:mm:ss a')
+      computed: {
+        humanFriendlyDate () {
+          return dayjs(this.timestamp).format('MMMM Do YYYY, h:mm:ss a')
         },
 
-        diffForHumans (date) {
-          return moment.unix(date).fromNow()
+        diffForHumans () {
+          return dayjs(this.timestamp * 1000).fromNow()
         }
       }
     }

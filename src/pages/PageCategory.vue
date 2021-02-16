@@ -21,7 +21,7 @@
 
       computed: {
         category () {
-          return this.$store.state.categories[this.id]
+          return this.$store.state.categories.find(c => c.key === this.id)
         }
       }
     }

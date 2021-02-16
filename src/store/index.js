@@ -1,10 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import sourceData from '@/data'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+const store = createStore({
   state: {
     ...sourceData,
     authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
@@ -12,44 +9,45 @@ export default new Vuex.Store({
 
   getters: {
     authUser (state) {
-      return state.users[state.authId]
-    }
+      return state.users.find(u => u.key === state.authId)
+    },
+    userPosts: (state) => {
+      return state.posts.filter(p => p.userId === state.authId)
+    },
+    posts: (state) => state.posts
   },
 
   actions: {
     createPost ({commit, state}, post) {
       const postId = 'greatPost' + Math.random()
-      post['.key'] = postId
+      post['key'] = postId
       post.userId = state.authId
       post.publishedAt = Math.floor(Date.now() / 1000)
 
       commit('setPost', {post, postId})
       commit('appendPostToThread', {threadId: post.threadId, postId})
-      commit('appendPostToUser', {userId: post.userId, postId})
     },
 
     updateUser ({commit}, user) {
-      commit('setUser', {userId: user['.key'], user})
+      commit('setUser', {userId: user['key'], user})
     }
   },
 
   mutations: {
     setPost (state, {post, postId}) {
-      Vue.set(state.posts, postId, post)
+      state.posts.push(post)
     },
 
     setUser (state, {user, userId}) {
-      Vue.set(state.users, userId, user)
+      const userIndex = state.users.findIndex(user => user.key === userId)
+      state.users.splice(userIndex, 1, user)
     },
 
     appendPostToThread (state, {postId, threadId}) {
-      const thread = state.threads[threadId]
-      Vue.set(thread.posts, postId, postId)
-    },
-
-    appendPostToUser (state, {postId, userId}) {
-      const user = state.users[userId]
-      Vue.set(user.posts, postId, postId)
+      const threadIndex = state.threads.findIndex(thread => thread.key === threadId)
+      state.threads[threadIndex].posts[postId] = postId
     }
   }
 })
+
+export default store
